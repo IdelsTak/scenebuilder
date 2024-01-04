@@ -31,11 +31,10 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.beans.property.DoubleProperty;
-import javafx.scene.Node;
-import javafx.scene.control.SplitPane;
+import java.util.*;
+import javafx.beans.property.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.control.SplitPane.Divider;
 
 /**
@@ -43,11 +42,23 @@ import javafx.scene.control.SplitPane.Divider;
  */
 public class SplitController {
 
-    public enum Target {
+    // Arrays.asList does not work with primitive types
+    private static List<Double> asList(double[] array) {
+        final List<Double> list = new ArrayList<>(array.length);
+        for (double d : array) {
+            list.add(d);
+        }
+        return list;
+    }
 
-        FIRST, LAST
-    };
-
+    // List.toArray does not work with primitive types
+    private static double[] toArray(List<Double> list) {
+        final double[] array = new double[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+        return array;
+    }
     private final SplitPane splitPane;
     private final Target target;
     private final Node targetNode;
@@ -61,18 +72,24 @@ public class SplitController {
         this.target = target;
 
         final List<Node> children = splitPane.getItems();
-        final int targetIndex = (target == Target.FIRST) ? 0 : children.size() - 1;
+        final int targetIndex = (target == Target.FIRST)
+                                ? 0
+                                : children.size() - 1;
         this.targetNode = children.get(targetIndex);
     }
 
     public DoubleProperty position() {
         final Divider divider = getTargetDivider();
-        return divider == null ? null : divider.positionProperty();
+        return divider == null
+               ? null
+               : divider.positionProperty();
     }
 
     public double getPosition() {
         final Divider divider = getTargetDivider();
-        return divider == null ? -1.0 : divider.getPosition();
+        return divider == null
+               ? -1.0
+               : divider.getPosition();
     }
 
     public void setPosition(double value) {
@@ -107,14 +124,17 @@ public class SplitController {
         if (isTargetVisible()) {
 
             final List<Divider> dividers = splitPane.getDividers();
-            final List<Double> positionsList = asList(splitPane.getDividerPositions());
+            final List<Double> positionsList = asList(splitPane
+              .getDividerPositions());
 
             // Backup the target divider positions (if any)
             // so we can restore it on showing
             final Divider targetDivider = getTargetDivider();
             if (targetDivider != null) {
                 dividerPosition = targetDivider.getPosition();
-                int targetDividerIndex = target == Target.FIRST ? 0 : dividers.size() - 1;
+                int targetDividerIndex = target == Target.FIRST
+                                         ? 0
+                                         : dividers.size() - 1;
                 positionsList.remove(targetDividerIndex);
             }
 
@@ -164,21 +184,8 @@ public class SplitController {
         return divider;
     }
 
-    // Arrays.asList does not work with primitive types
-    private static List<Double> asList(double[] array) {
-        final List<Double> list = new ArrayList<>(array.length);
-        for (double d : array) {
-            list.add(d);
-        }
-        return list;
-    }
-
-    // List.toArray does not work with primitive types
-    private static double[] toArray(List<Double> list) {
-        final double[] array = new double[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
-        return array;
+    public enum Target {
+        FIRST,
+        LAST
     }
 }
