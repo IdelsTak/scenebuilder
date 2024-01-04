@@ -18,6 +18,7 @@
         <javaVersion>${java.version}, ${java.runtime.name}</javaVersion>
         <javafxVersion>${javafx.version}</javafxVersion>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+        <exec.mainClass>com.oracle.javafx.scenebuilder.app.Launch</exec.mainClass>
     </properties>
 
     <dependencies>
